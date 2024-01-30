@@ -1,4 +1,6 @@
 
+# Socket-Server
+
 
 Reconstruir módulos de Node
 ```
@@ -12,5 +14,5 @@ tsc -w
 
 Levantar servidor
 ```
-nodemos dist/
+nodemon dist/
 node dist/

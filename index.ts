@@ -6,7 +6,7 @@ import cors from 'cors';
 
 
 
-const server = new Server();
+const server = Server.instance;
 
 //BodyParser (Configuración: Es para convertir lo que posteo a un objeto json de js. Se debe de poner antes de las rutas, ya que repercute sobre estas.
 server.app.use(bodyParser.urlencoded({extended:true}));
