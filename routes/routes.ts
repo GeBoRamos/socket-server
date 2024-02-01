@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import Server from '../classes/server';
 
 export const router = Router();
 
@@ -14,6 +15,14 @@ router.post('/mensajeNuevo', (req: Request, res:Response)=>{
 
     const nombre:string = req.body.Nombre;
     const apellidos: string = req.body.Apellidos;
+
+    const msg ={
+        de:nombre,
+        cuerpo:apellidos
+    }
+
+    const server = Server.instance;
+    server.io.emit('mensaje-nuevo', msg)
 
     res.status(200).json({
         Respuesta:'Todo correcto!',
@@ -37,6 +46,10 @@ router.post('/mensajeNuevo/:id', (req: Request, res:Response)=>{
     // })
 
     //LO DE ARRIBA ES IGUAL A LO DE ABAJO. ESTO ES PORQUE LA PROPIEDAD Y LA VARIABLE DEL JSON, SON IGUALES!
+
+    const server = Server.instance;
+    server.io.in(id).emit('mensaje-privado', req.body)
+
     res.status(200).json({
         Respuesta:'Todo correcto!',
         nombre,
