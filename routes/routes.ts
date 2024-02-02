@@ -1,5 +1,9 @@
-import { Router, Request, Response } from 'express';
+import { Router, Request, Response, request } from 'express';
 import Server from '../classes/server';
+import { UsuariosLista } from '../classes/usuarios-lista';
+import { Socket } from 'socket.io';
+import * as sockets from '../sockets/socket';
+
 
 export const router = Router();
 
@@ -56,4 +60,50 @@ router.post('/mensajeNuevo/:id', (req: Request, res:Response)=>{
         apellidos,
         id
     })
+})
+
+router.get('/usuarios',(req:Request, res:Response)=>{
+    
+    try{
+        const server = Server.instance;
+        const clients = server.io.sockets.sockets;
+        const clientsId: string[] = [];
+
+        clients.forEach(client =>{
+            clientsId.push(client.id)
+        })
+
+        return res.status(200).json({
+            ok: false,
+            clientsId
+        })      
+    }catch(error){
+        res.json({
+            ok:false,
+            error
+        })
+    }
+})
+
+router.get('/usuarios/detalle', (req:Request, res:Response)=>{
+
+    try{
+        const listaUsuarios = sockets.usuariosConectados.getLista();
+
+        return res.status(200).json({
+            ok: true,
+            usuarios: listaUsuarios
+        })
+
+    }catch(error){
+
+        return res.json({
+            ok:false,
+            error
+        })
+    }
+    
+
+    
+    
 })

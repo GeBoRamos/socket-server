@@ -5,7 +5,7 @@ import { UsuariosLista } from '../classes/usuarios-lista';
 import { Usuario } from '../classes/usuario';
 
 
-const usuariosConectados:UsuariosLista = new UsuariosLista();
+export const usuariosConectados:UsuariosLista = new UsuariosLista();
 
 //Conectar cliente
 export const conectarCliente = (id:string) =>{
@@ -16,11 +16,12 @@ export const conectarCliente = (id:string) =>{
 }
 
 //Informar de desconexión del cliente
-export const desconectar = (socket:Socket)=>{
+export const desconectar = (socket:Socket, io:socketIO.Server)=>{
     socket.on('disconnect', ()=>{
-        const usuarioEliminado = usuariosConectados.borrarUsuario(socket.id)
-        console.log(`Ha sido eliminado el usuario ${usuarioEliminado?.nombre} con el id ${usuarioEliminado?.id}`)
-        console.log('Cliente desconectado')
+        const usuarioEliminado = usuariosConectados.borrarUsuario(socket.id);
+        io.emit('usuarios-activos', usuariosConectados.getLista());
+        console.log(`Ha sido eliminado el usuario ${usuarioEliminado?.nombre} con el id ${usuarioEliminado?.id}`);
+        console.log('Cliente desconectado');
     })
 }
 
@@ -29,21 +30,28 @@ export const mensaje = (socket: Socket, io:socketIO.Server)=>{
     socket.on('mensaje', (data)=>{
         console.log(data);
 
-        io.emit('mensaje-nuevo', data)
+        io.emit('mensaje-nuevo', data);
 
     })
 }
 
-export const configurarUsuario = (socket:Socket) =>{
+export const configurarUsuario = (socket:Socket, io:socketIO.Server) =>{
     //El callback es opcional en el .on, pero en este caso queremos que haya respuesta al front.
     //El callback del .emit tambien es opcional.
     socket.on('configurar-usuario', (data, callback)=>{
 
         console.log('Configurando usuario', data.nombre);
         usuariosConectados.actualizarNombre(socket.id, data.nombre)
+        io.emit('usuarios-activos', usuariosConectados.getLista())
         console.log(usuariosConectados.getLista())
         callback({
             ok:true,
             mensaje: `Usuario ${data.nombre} correctamente configurado`})
+    })
+}
+
+export const obtenerUsuarios = (socket:Socket, io:socketIO.Server)=>{
+    socket.on('obtener-usuarios', ()=>{
+        io.in(socket.id).emit('usuarios-activos', usuariosConectados.getLista())
     })
 }

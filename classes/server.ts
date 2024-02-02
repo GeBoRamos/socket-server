@@ -45,15 +45,16 @@ export default class Server{
             sockets.conectarCliente(socket.id)
 
             //Configurar usuario
-            sockets.configurarUsuario(socket);
+            sockets.configurarUsuario(socket, this.io);
 
             //Desconectar
-            sockets.desconectar(socket);
+            sockets.desconectar(socket, this.io);
             
             //Mensajes
             sockets.mensaje(socket, this.io);
 
-            
+            //Emision usuarios activos al inicio de la page /mensajes
+            sockets.obtenerUsuarios(socket, this.io);
             
         })
     }
