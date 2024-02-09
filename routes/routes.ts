@@ -1,7 +1,5 @@
 import { Router, Request, Response, request } from 'express';
 import Server from '../classes/server';
-import { UsuariosLista } from '../classes/usuarios-lista';
-import { Socket } from 'socket.io';
 import * as sockets from '../sockets/socket';
 
 
@@ -35,12 +33,16 @@ router.post('/mensajeNuevo', (req: Request, res:Response)=>{
     })
 })
 
-router.post('/mensajeNuevo/:id', (req: Request, res:Response)=>{
-    console.log(req.body);
+router.post('/mensajeNuevo/:idReceptor/:idEmisor', (req: Request, res:Response)=>{
 
-    const nombre: string = req.body.Nombre;
-    const apellidos: string = req.body.Apellidos;
-    const id: string = req.params.id;
+    const de: string = req.body.de;
+    const cuerpo: string = req.body.cuerpo; 
+    const nombreReceptor = req.body.nombreReceptor;
+    const privateMsg:boolean = true;
+    const bodyEmisor = {de, cuerpo, nombreReceptor, privateMsg};
+    const bodyReceptor = {de, cuerpo, privateMsg};
+    const idReceptor: string = req.params.idReceptor;
+    const idEmisor: string = req.params.idEmisor;
 
     // res.status(200).json({
     //     Respuesta:'Todo correcto!',
@@ -52,13 +54,15 @@ router.post('/mensajeNuevo/:id', (req: Request, res:Response)=>{
     //LO DE ARRIBA ES IGUAL A LO DE ABAJO. ESTO ES PORQUE LA PROPIEDAD Y LA VARIABLE DEL JSON, SON IGUALES!
 
     const server = Server.instance;
-    server.io.in(id).emit('mensaje-privado', req.body)
+    server.io.in(idReceptor).emit('mensaje-privado', bodyReceptor);
+    server.io.in(idEmisor).emit('mensaje-privado', bodyEmisor);
 
     res.status(200).json({
         Respuesta:'Todo correcto!',
-        nombre,
-        apellidos,
-        id
+        de,
+        cuerpo,
+        idReceptor,
+        idEmisor
     })
 })
 

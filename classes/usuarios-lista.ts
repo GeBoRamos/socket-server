@@ -15,9 +15,14 @@ export class UsuariosLista{
 
     public actualizarNombre (id:string, nombre: string){
         for(let usuario of this.lista){
+            if(usuario.nombre == nombre){
+                return true
+            }
+        }
+        for(let usuario of this.lista){
             if(usuario.id == id){
                 usuario.nombre = nombre;
-                break
+                return false
             }
         }
 

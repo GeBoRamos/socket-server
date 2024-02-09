@@ -40,13 +40,17 @@ export const configurarUsuario = (socket:Socket, io:socketIO.Server) =>{
     //El callback del .emit tambien es opcional.
     socket.on('configurar-usuario', (data, callback)=>{
 
-        console.log('Configurando usuario', data.nombre);
-        usuariosConectados.actualizarNombre(socket.id, data.nombre)
+ //       console.log('Configurando usuario', data.nombre, 'iddddddddddd', socket.id);
+        console.log('idddddddddddddddddddddddddd');
+        var usuarioYaEnUso:boolean | undefined = false;
+        usuarioYaEnUso = usuariosConectados.actualizarNombre(socket.id, data.nombre)
         io.emit('usuarios-activos', usuariosConectados.getLista())
         console.log(usuariosConectados.getLista())
         callback({
             ok:true,
-            mensaje: `Usuario ${data.nombre} correctamente configurado`})
+            mensaje: `Usuario ${data.nombre} correctamente configurado`,
+            id:socket.id,
+            usuarioYaEnUso})
     })
 }
 

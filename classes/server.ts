@@ -12,6 +12,7 @@ export default class Server{
     public io: socketIO.Server;
     public httpServer: http.Server;
 
+
     //Ponemos el constructor privado para no poder crear mas instancias de esta clase ya que creariamos mas conexiones de sockets y podriamos
     //obtener errores. En el caso del index.ts, como si que se crea una instancia de esta clase, debemos de hacer un getter de una propiedad,
     //que contendra la clase, con lo que conseguiremos una instancia.
@@ -40,6 +41,7 @@ export default class Server{
 
             console.log('Cliente conectado');
             console.log(socket.id)
+            
 
             //Conectar cliente
             sockets.conectarCliente(socket.id)
